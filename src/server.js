@@ -25,8 +25,8 @@ export const setupServer = () => {
     cors({
       origin: (origin, callback) => {
         const allowedOrigins = [
-          "https://joke-app-front.vercel.app/",
-          "https://jokeappback.onrender.com/api",
+          "https://joke-app-front.vercel.app",
+          "https://jokeappback.onrender.com",
         ];
         if (!origin || allowedOrigins.indexOf(origin) !== -1) {
           callback(null, true);
