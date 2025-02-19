@@ -4,7 +4,8 @@ import cors from "cors";
 import dotenv from "dotenv";
 import env from "./utils/env.js";
 import jokesRouter from "./routes/routes.js";
-import { notFoundHandler, ErrorHandler } from "./middleware/errorHandlers.js";
+import { notFoundHandler} from "./middleware/errorHandlers.js";
+import createHttpError from "http-errors";
 
 dotenv.config();
 const PORT = Number(env("PORT"));
@@ -20,10 +21,25 @@ export const setupServer = () => {
   );
 
   app.use(express.json());
-  app.use(cors());
+  app.use(
+    cors({
+      origin: (origin, callback) => {
+        const allowedOrigins = [
+          "https://joke-app-front.vercel.app/",
+          "https://jokeappback.onrender.com/api",
+        ];
+        if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+          callback(null, true);
+        } else {
+          callback(createHttpError("Not allowed by CORS"));
+        }
+      },
+      credentials: true,
+    })
+  );
+
   app.use("/", jokesRouter);
   app.use("*", notFoundHandler);
-  // app.use(ErrorHandler);
   app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
   });
