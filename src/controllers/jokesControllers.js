@@ -4,6 +4,7 @@ import {
   saveAJokeService,
   updateVotesService,
 } from "../services/jokeServices.js";
+import { VALUES } from "../consts/consts.js";
 export const getARandomJokeController = async (req, res, next) => {
   const externalJoke = await getARandomJokeService();
   if (!externalJoke) {
@@ -25,7 +26,8 @@ export const getARandomJokeController = async (req, res, next) => {
 
 export const submitAVoteController = async (req, res, next) => {
   const { id } = req.params;
-  const data = await updateVotesService(id, req.body);
+  const updateObj = {value:VALUES[req.body.label], ...req.body};
+  const data = await updateVotesService(id, updateObj);
   if (!data) {
     next(createHttpError(404, `There is no joke with id: ${id}`));
     return;
